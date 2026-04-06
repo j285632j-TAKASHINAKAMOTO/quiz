@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>基本情報技術者 模擬問題</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .container { max-width: 520px; width: 100%; }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .header h1 { color: white; font-size: 16px; font-weight: bold; }
+  .header .counter { color: #a5b4fc; font-size: 14px; }
+
+  /* Progress */
+  .progress-bg {
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #818cf8, #c084fc);
+    height: 6px;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* Card */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    margin-bottom: 14px;
+  }
+
+  /* Field badge */
+  .badge {
+    display: inline-block;
+    color: white;
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  /* Question */
+  .question {
+    font-size: 15px;
+    font-weight: bold;
+    color: #1e1b4b;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  /* Choices */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 14px;
+    text-align: left;
+    cursor: pointer;
+    color: #374151;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+  }
+  .choice-btn:active { transform: scale(0.98); }
+  .choice-btn.correct {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #065f46;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.2);
+  }
+  .choice-btn.wrong {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+  }
+  .choice-label {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+  .choice-btn.correct .choice-label { background: #10b981; color: white; }
+  .choice-btn.wrong   .choice-label { background: #ef4444; color: white; }
+
+  /* Next button */
+  .next-btn {
+    display: none;
+    margin-top: 18px;
+    width: 100%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 0;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .next-btn.visible { display: block; }
+
+  /* Result panel */
+  .result-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .result-card.visible { display: flex; }
+
+  .result-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    color: white;
+    font-weight: bold;
+    animation: pop 0.35s ease;
+  }
+  .result-circle.correct-c {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    box-shadow: 0 8px 30px rgba(16,185,129,0.4);
+  }
+  .result-circle.wrong-c {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    box-shadow: 0 8px 30px rgba(239,68,68,0.4);
+  }
+  @keyframes pop {
+    0%  { transform: scale(0.4); opacity: 0; }
+    70% { transform: scale(1.12); }
+    100%{ transform: scale(1);   opacity: 1; }
+  }
+
+  .result-label { font-size: 17px; font-weight: bold; }
+  .result-label.correct-l { color: #065f46; }
+  .result-label.wrong-l   { color: #991b1b; }
+
+  .explanation-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    width: 100%;
+  }
+  .explanation-box .ex-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .explanation-box p {
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.75;
+  }
+
+  /* History dots */
+  .history { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 12px; font-weight: bold;
+  }
+  .dot.c { background: #10b981; }
+  .dot.w { background: #ef4444; }
+
+  /* Finish screen */
+  #finish-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  #finish-screen.visible { display: flex; }
+  .finish-card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+  }
+  .finish-emoji { font-size: 60px; margin-bottom: 8px; }
+  .finish-title { font-size: 24px; font-weight: bold; color: #1e1b4b; margin-bottom: 6px; }
+  .finish-grade { font-size: 16px; color: #6b7280; margin-bottom: 22px; }
+  .score-box {
+    background: #f5f3ff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .score-big { font-size: 50px; font-weight: bold; color: #4f46e5; }
+  .score-total { font-size: 26px; color: #6b7280; }
+  .score-pct { font-size: 16px; color: #6b7280; margin-top: 4px; }
+  .retry-btn {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white; border: none; border-radius: 12px;
+    padding: 14px 0; font-size: 16px; font-weight: bold;
+    cursor: pointer; width: 100%; margin-top: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Quiz area -->
+  <div id="quiz-area">
+    <div class="header">
+      <h1>基本情報技術者 模擬問題</h1>
+      <span class="counter" id="counter">1 / 10問</span>
+    </div>
+    <div class="progress-bg">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Question card -->
+    <div class="card">
+      <span class="badge" id="field-badge">分野</span>
+      <p class="question" id="question-text">問題文</p>
+      <div class="choices" id="choices"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題へ →</button>
+    </div>
+
+    <!-- Result panel -->
+    <div class="result-card" id="result-card">
+      <div class="result-circle" id="result-circle"></div>
+      <p class="result-label" id="result-label"></p>
+      <div class="explanation-box">
+        <div class="ex-title">解説</div>
+        <p id="explanation-text"></p>
+      </div>
+      <div class="history" id="history-dots"></div>
+    </div>
+  </div>
+
+  <!-- Finish screen -->
+  <div id="finish-screen">
+    <div class="finish-card">
+      <div class="finish-emoji" id="finish-emoji"></div>
+      <div class="finish-title">クイズ終了！</div>
+      <div class="finish-grade" id="finish-grade"></div>
+      <div class="score-box">
+        <span class="score-big" id="score-big"></span>
+        <span class="score-total"> / 10</span>
+        <div class="score-pct" id="score-pct"></div>
+      </div>
+      <div class="history" id="finish-history" style="margin-bottom:20px"></div>
+      <button class="retry-btn" onclick="restart()">もう一度挑戦する</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    field: "ネットワーク",
+    fieldColor: "#3b82f6",
+    question: "IPアドレス「192.168.1.0/24」のサブネットマスクはどれか。",
+    choices: ["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.128"],
+    answer: 2,
+    explanation: "/24 は先頭から24ビットが1であることを意味します。2進数で 11111111.11111111.11111111.00000000 = 255.255.255.0 になります。"
+  },
+  {
+    field: "データベース",
+    fieldColor: "#8b5cf6",
+    question: "関係データベースにおいて、表から重複行を除いた結果を取得するSQL句はどれか。",
+    choices: ["DISTINCT","UNIQUE","GROUP BY","HAVING"],
+    answer: 0,
+    explanation: "SELECT DISTINCT カラム名 FROM テーブル名 と記述することで、重複する行を除いた結果セットを取得できます。UNIQUE は制約、GROUP BY は集計、HAVING は集計後の絞り込みに使います。"
+  },
+  {
+    field: "セキュリティ",
+    fieldColor: "#ef4444",
+    question: "公開鍵暗号方式において、送信者が受信者へ暗号文を送る際に使用する鍵はどれか。",
+    choices: ["送信者の秘密鍵","送信者の公開鍵","受信者の秘密鍵","受信者の公開鍵"],
+    answer: 3,
+    explanation: "公開鍵暗号では「受信者の公開鍵で暗号化し、受信者の秘密鍵で復号」します。公開鍵は誰でも使えるため、送信者は受信者の公開鍵で暗号化して送ります。"
+  },
+  {
+    field: "アルゴリズム",
+    fieldColor: "#f59e0b",
+    question: "n個のデータをバブルソートで整列するときの平均計算量はどれか。",
+    choices: ["O(1)","O(log n)","O(n)","O(n²)"],
+    answer: 3,
+    explanation: "バブルソートは隣接する要素を比較・交換を繰り返します。最良・最悪・平均いずれも O(n²) の計算量です。効率が良いとはいえず、大量データには向きません。"
+  },
+  {
+    field: "ハードウェア",
+    fieldColor: "#10b981",
+    question: "CPUがメモリにアクセスする際、高速アクセスを実現するために使用される小容量の高速記憶装置はどれか。",
+    choices: ["レジスタ","キャッシュメモリ","主記憶（RAM）","仮想記憶"],
+    answer: 1,
+    explanation: "キャッシュメモリはCPUと主記憶の間に配置される高速な記憶装置です。よく使うデータをキャッシュに置くことで、低速な主記憶へのアクセス回数を減らし処理を高速化します。"
+  },
+  {
+    field: "OS",
+    fieldColor: "#6366f1",
+    question: "デッドロックが発生する条件として、適切でないものはどれか。",
+    choices: ["資源の占有と待機","資源の横取りが可能","循環待機","相互排他"],
+    answer: 1,
+    explanation: "デッドロックの4条件は「相互排他」「占有と待機」「横取り不可（非横取り）」「循環待機」です。「資源の横取りが可能」な状態ではデッドロックは発生しません。"
+  },
+  {
+    field: "情報理論",
+    fieldColor: "#ec4899",
+    question: "10進数の「13」を2進数に変換した値はどれか。",
+    choices: ["1011","1101","1110","1111"],
+    answer: 1,
+    explanation: "13 ÷ 2 = 6 余り 1、6 ÷ 2 = 3 余り 0、3 ÷ 2 = 1 余り 1、1 ÷ 2 = 0 余り 1。余りを下から読むと 1101 となります。"
+  },
+  {
+    field: "ソフトウェア開発",
+    fieldColor: "#14b8a6",
+    question: "プログラムの内部構造を考慮せずに入出力の仕様だけからテストケースを設計する手法はどれか。",
+    choices: ["ホワイトボックステスト","ブラックボックステスト","回帰テスト","結合テスト"],
+    answer: 1,
+    explanation: "ブラックボックステストは内部構造を意識せず、仕様（入力と期待される出力）だけに基づいてテストします。対してホワイトボックステストはコードの内部構造を元にテストします。"
+  },
+  {
+    field: "データ構造",
+    fieldColor: "#f97316",
+    question: "スタック（stack）のデータ操作の特性として正しいものはどれか。",
+    choices: ["先に入れたデータが先に取り出される（FIFO）","後に入れたデータが先に取り出される（LIFO）","優先度の高いデータから取り出される","ランダムな順序でデータが取り出される"],
+    answer: 1,
+    explanation: "スタックは LIFO（Last In First Out）構造で、最後に追加したデータが最初に取り出されます。皿を積み重ねるイメージです。FIFO はキューの特性です。"
+  },
+  {
+    field: "プロジェクト管理",
+    fieldColor: "#84cc16",
+    question: "プロジェクトのスケジュール管理に用いられる、作業の依存関係と日程を矢線で表した図はどれか。",
+    choices: ["ガントチャート","PERT図（アローダイアグラム）","フローチャート","UML図"],
+    answer: 1,
+    explanation: "PERT図（アローダイアグラム）は作業を矢線で表し、作業間の依存関係・クリティカルパスを把握できます。ガントチャートは横棒で期間を表し、進捗管理に向いています。"
+  }
+];
+
+const labels = ["ア","イ","ウ","エ"];
+let current = 0;
+let answered = false;
+let score = 0;
+let history = [];
+
+function render() {
+  const q = questions[current];
+  document.getElementById("counter").textContent = `${current+1} / ${questions.length}問`;
+  document.getElementById("progress-fill").style.width = `${(current / questions.length) * 100}%`;
+  document.getElementById("field-badge").textContent = q.field;
+  document.getElementById("field-badge").style.background = q.fieldColor;
+  document.getElementById("question-text").textContent = `問${current+1}. ${q.question}`;
+
+  // Choices
+  const choicesEl = document.getElementById("choices");
+  choicesEl.innerHTML = "";
+  q.choices.forEach((text, i) => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${text}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+
+  // Reset result
+  answered = false;
+  document.getElementById("result-card").className = "result-card";
+  document.getElementById("next-btn").className = "next-btn";
+  renderHistory();
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const correct = idx === q.answer;
+  if (correct) score++;
+  history.push(correct);
+
+  // Color buttons
+  const btns = document.querySelectorAll(".choice-btn");
+  btns.forEach((btn, i) => {
+    btn.onclick = null;
+    if (i === q.answer) {
+      btn.classList.add("correct");
+      btn.querySelector(".choice-label").style.background = "#10b981";
+      btn.querySelector(".choice-label").style.color = "white";
+    } else if (i === idx && !correct) {
+      btn.classList.add("wrong");
+      btn.querySelector(".choice-label").style.background = "#ef4444";
+      btn.querySelector(".choice-label").style.color = "white";
+    }
+  });
+
+  // Result card
+  const circle = document.getElementById("result-circle");
+  circle.className = "result-circle " + (correct ? "correct-c" : "wrong-c");
+  circle.textContent = correct ? "○" : "×";
+
+  const label = document.getElementById("result-label");
+  label.className = "result-label " + (correct ? "correct-l" : "wrong-l");
+  label.textContent = correct ? "正解！" : `不正解（正解：${labels[q.answer]}）`;
+
+  document.getElementById("explanation-text").textContent = q.explanation;
+  document.getElementById("result-card").className = "result-card visible";
+
+  // Next button
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.className = "next-btn visible";
+  nextBtn.textContent = current + 1 < questions.length ? "次の問題へ →" : "結果を見る";
+
+  renderHistory();
+
+  // Scroll to result
+  setTimeout(() => {
+    document.getElementById("result-card").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 100);
+}
+
+function renderHistory() {
+  const el = document.getElementById("history-dots");
+  if (!el) return;
+  el.innerHTML = "";
+  history.forEach(c => {
+    const d = document.createElement("div");
+    d.className = "dot " + (c ? "c" : "w");
+    d.textContent = c ? "○" : "×";
+    el.appendChild(d);
+  });
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showFinish();
+  } else {
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function showFinish() {
+  document.getElementById("quiz-area").style.display = "none";
+  const pct = Math.round(score / questions.length * 100);
+  document.getElementById("finish-emoji").textContent = pct >= 80 ? "🏆" : pct >= 60 ? "📝" : "💪";
+  document.getElementById("finish-grade").textContent = pct >= 80 ? "合格ライン突破！" : pct >= 60 ? "もう少し！" : "要復習";
+  document.getElementById("score-big").textContent = score;
+  document.getElementById("score-pct").textContent = `正解率 ${pct}%`;
+
+  const fh = document.getElementById("finish-history");
+  fh.innerHTML = "";
+  history.forEach(c => {
+    const d = document.createElement("div");
+    d.className = "dot " + (c ? "c" : "w");
+    d.textContent = c ? "○" : "×";
+    fh.appendChild(d);
+  });
+
+  const fs = document.getElementById("finish-screen");
+  fs.className = "visible";
+  fs.style.display = "flex";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function restart() {
+  current = 0; score = 0; history = [];
+  document.getElementById("finish-screen").style.display = "none";
+  document.getElementById("finish-screen").className = "";
+  document.getElementById("quiz-area").style.display = "block";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
