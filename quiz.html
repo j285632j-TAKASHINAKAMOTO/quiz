@@ -1,522 +1,645 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>基本情報技術者 模擬問題</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .container { max-width: 520px; width: 100%; }
+import { useState } from "react";
 
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-  .header h1 { color: white; font-size: 16px; font-weight: bold; }
-  .header .counter { color: #a5b4fc; font-size: 14px; }
-
-  /* Progress */
-  .progress-bg {
-    background: rgba(255,255,255,0.15);
-    border-radius: 99px;
-    height: 6px;
-    margin-bottom: 18px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    background: linear-gradient(90deg, #818cf8, #c084fc);
-    height: 6px;
-    border-radius: 99px;
-    transition: width 0.4s ease;
-  }
-
-  /* Card */
-  .card {
-    background: white;
-    border-radius: 20px;
-    padding: 24px 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    margin-bottom: 14px;
-  }
-
-  /* Field badge */
-  .badge {
-    display: inline-block;
-    color: white;
-    border-radius: 99px;
-    padding: 4px 14px;
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 12px;
-  }
-
-  /* Question */
-  .question {
-    font-size: 15px;
-    font-weight: bold;
-    color: #1e1b4b;
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  /* Choices */
-  .choices { display: flex; flex-direction: column; gap: 10px; }
-  .choice-btn {
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 12px 14px;
-    text-align: left;
-    cursor: pointer;
-    color: #374151;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: background 0.15s, border-color 0.15s;
-    -webkit-tap-highlight-color: transparent;
-    width: 100%;
-  }
-  .choice-btn:active { transform: scale(0.98); }
-  .choice-btn.correct {
-    background: #d1fae5;
-    border-color: #10b981;
-    color: #065f46;
-    box-shadow: 0 4px 12px rgba(16,185,129,0.2);
-  }
-  .choice-btn.wrong {
-    background: #fee2e2;
-    border-color: #ef4444;
-    color: #991b1b;
-  }
-  .choice-label {
-    min-width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #f3f4f6;
-    color: #6b7280;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 13px;
-    flex-shrink: 0;
-    transition: background 0.15s, color 0.15s;
-  }
-  .choice-btn.correct .choice-label { background: #10b981; color: white; }
-  .choice-btn.wrong   .choice-label { background: #ef4444; color: white; }
-
-  /* Next button */
-  .next-btn {
-    display: none;
-    margin-top: 18px;
-    width: 100%;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 14px 0;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .next-btn.visible { display: block; }
-
-  /* Result panel */
-  .result-card {
-    background: white;
-    border-radius: 20px;
-    padding: 24px 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .result-card.visible { display: flex; }
-
-  .result-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 52px;
-    color: white;
-    font-weight: bold;
-    animation: pop 0.35s ease;
-  }
-  .result-circle.correct-c {
-    background: linear-gradient(135deg, #10b981, #34d399);
-    box-shadow: 0 8px 30px rgba(16,185,129,0.4);
-  }
-  .result-circle.wrong-c {
-    background: linear-gradient(135deg, #ef4444, #f87171);
-    box-shadow: 0 8px 30px rgba(239,68,68,0.4);
-  }
-  @keyframes pop {
-    0%  { transform: scale(0.4); opacity: 0; }
-    70% { transform: scale(1.12); }
-    100%{ transform: scale(1);   opacity: 1; }
-  }
-
-  .result-label { font-size: 17px; font-weight: bold; }
-  .result-label.correct-l { color: #065f46; }
-  .result-label.wrong-l   { color: #991b1b; }
-
-  .explanation-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 14px 16px;
-    width: 100%;
-  }
-  .explanation-box .ex-title {
-    font-size: 11px;
-    font-weight: bold;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-  .explanation-box p {
-    font-size: 13px;
-    color: #334155;
-    line-height: 1.75;
-  }
-
-  /* History dots */
-  .history { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-  .dot {
-    width: 24px; height: 24px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 12px; font-weight: bold;
-  }
-  .dot.c { background: #10b981; }
-  .dot.w { background: #ef4444; }
-
-  /* Finish screen */
-  #finish-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-  #finish-screen.visible { display: flex; }
-  .finish-card {
-    background: white;
-    border-radius: 24px;
-    padding: 40px 32px;
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-  }
-  .finish-emoji { font-size: 60px; margin-bottom: 8px; }
-  .finish-title { font-size: 24px; font-weight: bold; color: #1e1b4b; margin-bottom: 6px; }
-  .finish-grade { font-size: 16px; color: #6b7280; margin-bottom: 22px; }
-  .score-box {
-    background: #f5f3ff;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .score-big { font-size: 50px; font-weight: bold; color: #4f46e5; }
-  .score-total { font-size: 26px; color: #6b7280; }
-  .score-pct { font-size: 16px; color: #6b7280; margin-top: 4px; }
-  .retry-btn {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: white; border: none; border-radius: 12px;
-    padding: 14px 0; font-size: 16px; font-weight: bold;
-    cursor: pointer; width: 100%; margin-top: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-</style>
-</head>
-<body>
-<div class="container">
-
-  <!-- Quiz area -->
-  <div id="quiz-area">
-    <div class="header">
-      <h1>基本情報技術者 模擬問題</h1>
-      <span class="counter" id="counter">1 / 10問</span>
-    </div>
-    <div class="progress-bg">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
-
-    <!-- Question card -->
-    <div class="card">
-      <span class="badge" id="field-badge">分野</span>
-      <p class="question" id="question-text">問題文</p>
-      <div class="choices" id="choices"></div>
-      <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題へ →</button>
-    </div>
-
-    <!-- Result panel -->
-    <div class="result-card" id="result-card">
-      <div class="result-circle" id="result-circle"></div>
-      <p class="result-label" id="result-label"></p>
-      <div class="explanation-box">
-        <div class="ex-title">解説</div>
-        <p id="explanation-text"></p>
-      </div>
-      <div class="history" id="history-dots"></div>
-    </div>
-  </div>
-
-  <!-- Finish screen -->
-  <div id="finish-screen">
-    <div class="finish-card">
-      <div class="finish-emoji" id="finish-emoji"></div>
-      <div class="finish-title">クイズ終了！</div>
-      <div class="finish-grade" id="finish-grade"></div>
-      <div class="score-box">
-        <span class="score-big" id="score-big"></span>
-        <span class="score-total"> / 10</span>
-        <div class="score-pct" id="score-pct"></div>
-      </div>
-      <div class="history" id="finish-history" style="margin-bottom:20px"></div>
-      <button class="retry-btn" onclick="restart()">もう一度挑戦する</button>
-    </div>
-  </div>
-
-</div>
-
-<script>
 const questions = [
   {
     field: "ネットワーク",
-    fieldColor: "#3b82f6",
     question: "IPアドレス「192.168.1.0/24」のサブネットマスクはどれか。",
-    choices: ["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.128"],
-    answer: 2,
-    explanation: "/24 は先頭から24ビットが1であることを意味します。2進数で 11111111.11111111.11111111.00000000 = 255.255.255.0 になります。"
+    choices: {
+      ア: "255.0.0.0",
+      イ: "255.255.0.0",
+      ウ: "255.255.255.0",
+      エ: "255.255.255.128",
+    },
+    answer: "ウ",
+    explanation:
+      "/24 は先頭から24ビットが1であることを意味します。2進数で 11111111.11111111.11111111.00000000 = 255.255.255.0 になります。",
   },
   {
     field: "データベース",
-    fieldColor: "#8b5cf6",
-    question: "関係データベースにおいて、表から重複行を除いた結果を取得するSQL句はどれか。",
-    choices: ["DISTINCT","UNIQUE","GROUP BY","HAVING"],
-    answer: 0,
-    explanation: "SELECT DISTINCT カラム名 FROM テーブル名 と記述することで、重複する行を除いた結果セットを取得できます。UNIQUE は制約、GROUP BY は集計、HAVING は集計後の絞り込みに使います。"
+    question:
+      "関係データベースにおいて、表から重複行を除いた結果を取得するSQL句はどれか。",
+    choices: {
+      ア: "DISTINCT",
+      イ: "UNIQUE",
+      ウ: "GROUP BY",
+      エ: "HAVING",
+    },
+    answer: "ア",
+    explanation:
+      "SELECT DISTINCT カラム名 FROM テーブル名 と記述することで、重複する行を除いた結果セットを取得できます。UNIQUE は制約、GROUP BY は集計、HAVING は集計後の絞り込みに使います。",
   },
   {
     field: "セキュリティ",
-    fieldColor: "#ef4444",
-    question: "公開鍵暗号方式において、送信者が受信者へ暗号文を送る際に使用する鍵はどれか。",
-    choices: ["送信者の秘密鍵","送信者の公開鍵","受信者の秘密鍵","受信者の公開鍵"],
-    answer: 3,
-    explanation: "公開鍵暗号では「受信者の公開鍵で暗号化し、受信者の秘密鍵で復号」します。公開鍵は誰でも使えるため、送信者は受信者の公開鍵で暗号化して送ります。"
+    question:
+      "公開鍵暗号方式において、送信者が受信者へ暗号文を送る際に使用する鍵はどれか。",
+    choices: {
+      ア: "送信者の秘密鍵",
+      イ: "送信者の公開鍵",
+      ウ: "受信者の秘密鍵",
+      エ: "受信者の公開鍵",
+    },
+    answer: "エ",
+    explanation:
+      "公開鍵暗号では「受信者の公開鍵で暗号化し、受信者の秘密鍵で復号」します。公開鍵は誰でも使えるため、送信者は受信者の公開鍵で暗号化して送ります。",
   },
   {
     field: "アルゴリズム",
-    fieldColor: "#f59e0b",
-    question: "n個のデータをバブルソートで整列するときの平均計算量はどれか。",
-    choices: ["O(1)","O(log n)","O(n)","O(n²)"],
-    answer: 3,
-    explanation: "バブルソートは隣接する要素を比較・交換を繰り返します。最良・最悪・平均いずれも O(n²) の計算量です。効率が良いとはいえず、大量データには向きません。"
+    question:
+      "n個のデータをバブルソートで整列するときの平均計算量はどれか。",
+    choices: {
+      ア: "O(1)",
+      イ: "O(log n)",
+      ウ: "O(n)",
+      エ: "O(n²)",
+    },
+    answer: "エ",
+    explanation:
+      "バブルソートは隣接する要素を比較・交換を繰り返します。最良・最悪・平均いずれも O(n²) の計算量です。効率が良いとはいえず、大量データには向きません。",
   },
   {
     field: "ハードウェア",
-    fieldColor: "#10b981",
-    question: "CPUがメモリにアクセスする際、高速アクセスを実現するために使用される小容量の高速記憶装置はどれか。",
-    choices: ["レジスタ","キャッシュメモリ","主記憶（RAM）","仮想記憶"],
-    answer: 1,
-    explanation: "キャッシュメモリはCPUと主記憶の間に配置される高速な記憶装置です。よく使うデータをキャッシュに置くことで、低速な主記憶へのアクセス回数を減らし処理を高速化します。"
+    question:
+      "CPUがメモリにアクセスする際、高速アクセスを実現するために使用される小容量の高速記憶装置はどれか。",
+    choices: {
+      ア: "レジスタ",
+      イ: "キャッシュメモリ",
+      ウ: "主記憶（RAM）",
+      エ: "仮想記憶",
+    },
+    answer: "イ",
+    explanation:
+      "キャッシュメモリはCPUと主記憶の間に配置される高速な記憶装置です。よく使うデータをキャッシュに置くことで、低速な主記憶へのアクセス回数を減らし処理を高速化します。",
   },
   {
-    field: "OS",
-    fieldColor: "#6366f1",
+    field: "オペレーティングシステム",
     question: "デッドロックが発生する条件として、適切でないものはどれか。",
-    choices: ["資源の占有と待機","資源の横取りが可能","循環待機","相互排他"],
-    answer: 1,
-    explanation: "デッドロックの4条件は「相互排他」「占有と待機」「横取り不可（非横取り）」「循環待機」です。「資源の横取りが可能」な状態ではデッドロックは発生しません。"
+    choices: {
+      ア: "資源の占有と待機",
+      イ: "資源の横取りが可能",
+      ウ: "循環待機",
+      エ: "相互排他",
+    },
+    answer: "イ",
+    explanation:
+      "デッドロックの4条件は「相互排他」「占有と待機」「横取り不可（非横取り）」「循環待機」です。「資源の横取りが可能」な状態ではデッドロックは発生しません。",
   },
   {
     field: "情報理論",
-    fieldColor: "#ec4899",
-    question: "10進数の「13」を2進数に変換した値はどれか。",
-    choices: ["1011","1101","1110","1111"],
-    answer: 1,
-    explanation: "13 ÷ 2 = 6 余り 1、6 ÷ 2 = 3 余り 0、3 ÷ 2 = 1 余り 1、1 ÷ 2 = 0 余り 1。余りを下から読むと 1101 となります。"
+    question:
+      "10進数の「13」を2進数に変換した値はどれか。",
+    choices: {
+      ア: "1011",
+      イ: "1101",
+      ウ: "1110",
+      エ: "1111",
+    },
+    answer: "イ",
+    explanation:
+      "13 ÷ 2 = 6 余り 1、6 ÷ 2 = 3 余り 0、3 ÷ 2 = 1 余り 1、1 ÷ 2 = 0 余り 1。余りを下から読むと 1101 となります。",
   },
   {
     field: "ソフトウェア開発",
-    fieldColor: "#14b8a6",
-    question: "プログラムの内部構造を考慮せずに入出力の仕様だけからテストケースを設計する手法はどれか。",
-    choices: ["ホワイトボックステスト","ブラックボックステスト","回帰テスト","結合テスト"],
-    answer: 1,
-    explanation: "ブラックボックステストは内部構造を意識せず、仕様（入力と期待される出力）だけに基づいてテストします。対してホワイトボックステストはコードの内部構造を元にテストします。"
+    question:
+      "ソフトウェアのテスト手法のうち、プログラムの内部構造を考慮せずに入出力の仕様だけからテストケースを設計する手法はどれか。",
+    choices: {
+      ア: "ホワイトボックステスト",
+      イ: "ブラックボックステスト",
+      ウ: "回帰テスト",
+      エ: "結合テスト",
+    },
+    answer: "イ",
+    explanation:
+      "ブラックボックステストは内部構造を意識せず、仕様（入力と期待される出力）だけに基づいてテストします。対してホワイトボックステストはコードの内部構造を元にテストします。",
   },
   {
     field: "データ構造",
-    fieldColor: "#f97316",
-    question: "スタック（stack）のデータ操作の特性として正しいものはどれか。",
-    choices: ["先に入れたデータが先に取り出される（FIFO）","後に入れたデータが先に取り出される（LIFO）","優先度の高いデータから取り出される","ランダムな順序でデータが取り出される"],
-    answer: 1,
-    explanation: "スタックは LIFO（Last In First Out）構造で、最後に追加したデータが最初に取り出されます。皿を積み重ねるイメージです。FIFO はキューの特性です。"
+    question:
+      "スタック（stack）のデータ操作の特性として正しいものはどれか。",
+    choices: {
+      ア: "先に入れたデータが先に取り出される（FIFO）",
+      イ: "後に入れたデータが先に取り出される（LIFO）",
+      ウ: "優先度の高いデータから取り出される",
+      エ: "ランダムな順序でデータが取り出される",
+    },
+    answer: "イ",
+    explanation:
+      "スタックは LIFO（Last In First Out）構造で、最後に追加したデータが最初に取り出されます。皿を積み重ねるイメージです。FIFO はキューの特性です。",
   },
   {
-    field: "プロジェクト管理",
-    fieldColor: "#84cc16",
-    question: "プロジェクトのスケジュール管理に用いられる、作業の依存関係と日程を矢線で表した図はどれか。",
-    choices: ["ガントチャート","PERT図（アローダイアグラム）","フローチャート","UML図"],
-    answer: 1,
-    explanation: "PERT図（アローダイアグラム）は作業を矢線で表し、作業間の依存関係・クリティカルパスを把握できます。ガントチャートは横棒で期間を表し、進捗管理に向いています。"
-  }
+    field: "プロジェクトマネジメント",
+    question:
+      "プロジェクトのスケジュール管理に用いられる、作業の依存関係と日程を矢線で表した図はどれか。",
+    choices: {
+      ア: "ガントチャート",
+      イ: "PERT図（アローダイアグラム）",
+      ウ: "フローチャート",
+      エ: "UML図",
+    },
+    answer: "イ",
+    explanation:
+      "PERT図（アローダイアグラム）は作業を矢線で表し、作業間の依存関係・クリティカルパスを把握できます。ガントチャートは横棒で期間を表し、進捗管理に向いています。",
+  },
 ];
 
-const labels = ["ア","イ","ウ","エ"];
-let current = 0;
-let answered = false;
-let score = 0;
-let history = [];
+const fieldColors = {
+  ネットワーク: "#3b82f6",
+  データベース: "#8b5cf6",
+  セキュリティ: "#ef4444",
+  アルゴリズム: "#f59e0b",
+  ハードウェア: "#10b981",
+  オペレーティングシステム: "#6366f1",
+  情報理論: "#ec4899",
+  ソフトウェア開発: "#14b8a6",
+  データ構造: "#f97316",
+  プロジェクトマネジメント: "#84cc16",
+};
 
-function render() {
+export default function App() {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState([]);
+
   const q = questions[current];
-  document.getElementById("counter").textContent = `${current+1} / ${questions.length}問`;
-  document.getElementById("progress-fill").style.width = `${(current / questions.length) * 100}%`;
-  document.getElementById("field-badge").textContent = q.field;
-  document.getElementById("field-badge").style.background = q.fieldColor;
-  document.getElementById("question-text").textContent = `問${current+1}. ${q.question}`;
+  const isCorrect = selected === q.answer;
+  const fieldColor = fieldColors[q.field] || "#6b7280";
 
-  // Choices
-  const choicesEl = document.getElementById("choices");
-  choicesEl.innerHTML = "";
-  q.choices.forEach((text, i) => {
-    const btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${text}</span>`;
-    btn.onclick = () => selectAnswer(i);
-    choicesEl.appendChild(btn);
-  });
+  const handleSelect = (key) => {
+    if (selected !== null) return;
+    setSelected(key);
+    const correct = key === q.answer;
+    if (correct) setScore((s) => s + 1);
+    setAnswers((a) => [...a, { correct }]);
+  };
 
-  // Reset result
-  answered = false;
-  document.getElementById("result-card").className = "result-card";
-  document.getElementById("next-btn").className = "next-btn";
-  renderHistory();
-}
-
-function selectAnswer(idx) {
-  if (answered) return;
-  answered = true;
-  const q = questions[current];
-  const correct = idx === q.answer;
-  if (correct) score++;
-  history.push(correct);
-
-  // Color buttons
-  const btns = document.querySelectorAll(".choice-btn");
-  btns.forEach((btn, i) => {
-    btn.onclick = null;
-    if (i === q.answer) {
-      btn.classList.add("correct");
-      btn.querySelector(".choice-label").style.background = "#10b981";
-      btn.querySelector(".choice-label").style.color = "white";
-    } else if (i === idx && !correct) {
-      btn.classList.add("wrong");
-      btn.querySelector(".choice-label").style.background = "#ef4444";
-      btn.querySelector(".choice-label").style.color = "white";
+  const handleNext = () => {
+    if (current + 1 >= questions.length) {
+      setFinished(true);
+    } else {
+      setCurrent((c) => c + 1);
+      setSelected(null);
     }
-  });
+  };
 
-  // Result card
-  const circle = document.getElementById("result-circle");
-  circle.className = "result-circle " + (correct ? "correct-c" : "wrong-c");
-  circle.textContent = correct ? "○" : "×";
+  const handleRestart = () => {
+    setCurrent(0);
+    setSelected(null);
+    setScore(0);
+    setFinished(false);
+    setAnswers([]);
+  };
 
-  const label = document.getElementById("result-label");
-  label.className = "result-label " + (correct ? "correct-l" : "wrong-l");
-  label.textContent = correct ? "正解！" : `不正解（正解：${labels[q.answer]}）`;
-
-  document.getElementById("explanation-text").textContent = q.explanation;
-  document.getElementById("result-card").className = "result-card visible";
-
-  // Next button
-  const nextBtn = document.getElementById("next-btn");
-  nextBtn.className = "next-btn visible";
-  nextBtn.textContent = current + 1 < questions.length ? "次の問題へ →" : "結果を見る";
-
-  renderHistory();
-
-  // Scroll to result
-  setTimeout(() => {
-    document.getElementById("result-card").scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, 100);
-}
-
-function renderHistory() {
-  const el = document.getElementById("history-dots");
-  if (!el) return;
-  el.innerHTML = "";
-  history.forEach(c => {
-    const d = document.createElement("div");
-    d.className = "dot " + (c ? "c" : "w");
-    d.textContent = c ? "○" : "×";
-    el.appendChild(d);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current >= questions.length) {
-    showFinish();
-  } else {
-    render();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  if (finished) {
+    const pct = Math.round((score / questions.length) * 100);
+    const grade =
+      pct >= 80 ? "合格ライン突破！🎉" : pct >= 60 ? "もう少し！" : "要復習📚";
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "'Segoe UI', sans-serif",
+          padding: 20,
+        }}
+      >
+        <div
+          style={{
+            background: "white",
+            borderRadius: 24,
+            padding: "48px 40px",
+            maxWidth: 480,
+            width: "100%",
+            textAlign: "center",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.4)",
+          }}
+        >
+          <div style={{ fontSize: 64, marginBottom: 8 }}>
+            {pct >= 80 ? "🏆" : pct >= 60 ? "📝" : "💪"}
+          </div>
+          <h2
+            style={{
+              fontSize: 26,
+              fontWeight: "bold",
+              color: "#1e1b4b",
+              marginBottom: 8,
+            }}
+          >
+            クイズ終了！
+          </h2>
+          <p style={{ fontSize: 18, color: "#6b7280", marginBottom: 24 }}>
+            {grade}
+          </p>
+          <div
+            style={{
+              background: "#f5f3ff",
+              borderRadius: 16,
+              padding: "24px 32px",
+              marginBottom: 24,
+            }}
+          >
+            <div
+              style={{ fontSize: 56, fontWeight: "bold", color: "#4f46e5" }}
+            >
+              {score} <span style={{ fontSize: 28, color: "#6b7280" }}>/ {questions.length}</span>
+            </div>
+            <div style={{ fontSize: 18, color: "#6b7280", marginTop: 4 }}>
+              正解率 {pct}%
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              justifyContent: "center",
+              marginBottom: 28,
+            }}
+          >
+            {answers.map((a, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  background: a.correct ? "#10b981" : "#ef4444",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                {a.correct ? "○" : "×"}
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={handleRestart}
+            style={{
+              background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+              color: "white",
+              border: "none",
+              borderRadius: 12,
+              padding: "14px 40px",
+              fontSize: 16,
+              fontWeight: "bold",
+              cursor: "pointer",
+              width: "100%",
+            }}
+          >
+            もう一度挑戦する
+          </button>
+        </div>
+      </div>
+    );
   }
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'Segoe UI', sans-serif",
+        padding: 16,
+      }}
+    >
+      <div style={{ maxWidth: 900, width: "100%" }}>
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 20,
+          }}
+        >
+          <h1
+            style={{
+              color: "white",
+              fontSize: 18,
+              fontWeight: "bold",
+              margin: 0,
+            }}
+          >
+            基本情報技術者 模擬問題
+          </h1>
+          <div style={{ color: "#a5b4fc", fontSize: 15 }}>
+            {current + 1} / {questions.length}問
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: 99,
+            height: 6,
+            marginBottom: 20,
+          }}
+        >
+          <div
+            style={{
+              background: "linear-gradient(90deg, #818cf8, #c084fc)",
+              borderRadius: 99,
+              height: 6,
+              width: `${((current + (selected ? 1 : 0)) / questions.length) * 100}%`,
+              transition: "width 0.4s ease",
+            }}
+          />
+        </div>
+
+        {/* Main card area */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: selected ? "1fr 1fr" : "1fr",
+            gap: 16,
+            alignItems: "start",
+            transition: "all 0.3s",
+          }}
+        >
+          {/* Question panel */}
+          <div
+            style={{
+              background: "white",
+              borderRadius: 20,
+              padding: 28,
+              boxShadow: "0 20px 50px rgba(0,0,0,0.3)",
+            }}
+          >
+            {/* Field badge */}
+            <div style={{ marginBottom: 14 }}>
+              <span
+                style={{
+                  background: fieldColor,
+                  color: "white",
+                  borderRadius: 99,
+                  padding: "4px 14px",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                }}
+              >
+                {q.field}
+              </span>
+            </div>
+
+            {/* Question text */}
+            <p
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#1e1b4b",
+                lineHeight: 1.7,
+                marginBottom: 22,
+              }}
+            >
+              問{current + 1}. {q.question}
+            </p>
+
+            {/* Choices */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {Object.entries(q.choices).map(([key, val]) => {
+                let bg = "white";
+                let border = "2px solid #e5e7eb";
+                let color = "#374151";
+                let shadow = "none";
+
+                if (selected) {
+                  if (key === q.answer) {
+                    bg = "#d1fae5";
+                    border = "2px solid #10b981";
+                    color = "#065f46";
+                    shadow = "0 4px 12px rgba(16,185,129,0.2)";
+                  } else if (key === selected) {
+                    bg = "#fee2e2";
+                    border = "2px solid #ef4444";
+                    color = "#991b1b";
+                  }
+                }
+
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleSelect(key)}
+                    disabled={selected !== null}
+                    style={{
+                      background: bg,
+                      border,
+                      borderRadius: 12,
+                      padding: "12px 16px",
+                      textAlign: "left",
+                      cursor: selected ? "default" : "pointer",
+                      color,
+                      fontSize: 14,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      boxShadow: shadow,
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!selected) {
+                        e.currentTarget.style.background = "#f5f3ff";
+                        e.currentTarget.style.borderColor = "#8b5cf6";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!selected) {
+                        e.currentTarget.style.background = "white";
+                        e.currentTarget.style.borderColor = "#e5e7eb";
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        minWidth: 28,
+                        height: 28,
+                        borderRadius: "50%",
+                        background:
+                          selected && key === q.answer
+                            ? "#10b981"
+                            : selected && key === selected
+                            ? "#ef4444"
+                            : "#f3f4f6",
+                        color:
+                          selected && (key === q.answer || key === selected)
+                            ? "white"
+                            : "#6b7280",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "bold",
+                        fontSize: 13,
+                      }}
+                    >
+                      {key}
+                    </span>
+                    <span>{val}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next button */}
+            {selected && (
+              <button
+                onClick={handleNext}
+                style={{
+                  marginTop: 20,
+                  width: "100%",
+                  background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 12,
+                  padding: "13px 0",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {current + 1 < questions.length ? "次の問題へ →" : "結果を見る"}
+              </button>
+            )}
+          </div>
+
+          {/* Result panel */}
+          {selected && (
+            <div
+              style={{
+                background: "white",
+                borderRadius: 20,
+                padding: 28,
+                boxShadow: "0 20px 50px rgba(0,0,0,0.3)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 16,
+              }}
+            >
+              {/* Big circle result */}
+              <div
+                style={{
+                  width: 110,
+                  height: 110,
+                  borderRadius: "50%",
+                  background: isCorrect
+                    ? "linear-gradient(135deg, #10b981, #34d399)"
+                    : "linear-gradient(135deg, #ef4444, #f87171)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: isCorrect
+                    ? "0 8px 30px rgba(16,185,129,0.4)"
+                    : "0 8px 30px rgba(239,68,68,0.4)",
+                  animation: "pop 0.3s ease",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 58,
+                    color: "white",
+                    lineHeight: 1,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {isCorrect ? "○" : "×"}
+                </span>
+              </div>
+
+              <p
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  color: isCorrect ? "#065f46" : "#991b1b",
+                  margin: 0,
+                }}
+              >
+                {isCorrect ? "正解！" : `不正解 (正解：${q.answer})`}
+              </p>
+
+              {/* Explanation */}
+              <div
+                style={{
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 12,
+                  padding: "16px 18px",
+                  width: "100%",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "bold",
+                    color: "#64748b",
+                    marginBottom: 6,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                  }}
+                >
+                  解説
+                </p>
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: "#334155",
+                    lineHeight: 1.75,
+                    margin: 0,
+                  }}
+                >
+                  {q.explanation}
+                </p>
+              </div>
+
+              {/* Score so far */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 6,
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
+                {answers.map((a, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      background: a.correct ? "#10b981" : "#ef4444",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontSize: 13,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {a.correct ? "○" : "×"}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes pop {
+          0% { transform: scale(0.5); opacity: 0; }
+          70% { transform: scale(1.1); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
+    </div>
+  );
 }
-
-function showFinish() {
-  document.getElementById("quiz-area").style.display = "none";
-  const pct = Math.round(score / questions.length * 100);
-  document.getElementById("finish-emoji").textContent = pct >= 80 ? "🏆" : pct >= 60 ? "📝" : "💪";
-  document.getElementById("finish-grade").textContent = pct >= 80 ? "合格ライン突破！" : pct >= 60 ? "もう少し！" : "要復習";
-  document.getElementById("score-big").textContent = score;
-  document.getElementById("score-pct").textContent = `正解率 ${pct}%`;
-
-  const fh = document.getElementById("finish-history");
-  fh.innerHTML = "";
-  history.forEach(c => {
-    const d = document.createElement("div");
-    d.className = "dot " + (c ? "c" : "w");
-    d.textContent = c ? "○" : "×";
-    fh.appendChild(d);
-  });
-
-  const fs = document.getElementById("finish-screen");
-  fs.className = "visible";
-  fs.style.display = "flex";
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function restart() {
-  current = 0; score = 0; history = [];
-  document.getElementById("finish-screen").style.display = "none";
-  document.getElementById("finish-screen").className = "";
-  document.getElementById("quiz-area").style.display = "block";
-  render();
-}
-
-render();
-</script>
-</body>
-</html>
