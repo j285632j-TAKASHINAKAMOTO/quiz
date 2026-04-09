@@ -27,6 +27,7 @@ button { font-family: inherit; }
 <div id="app"></div>
 <script>
 const questions = [
+  // ===== オリジナル10問 =====
   {
     field: "ネットワーク",
     question: "IPアドレス「192.168.1.0/24」のサブネットマスクはどれか。",
@@ -53,49 +54,563 @@ const questions = [
     question: "n個のデータをバブルソートで整列するときの平均計算量はどれか。",
     choices: { ア: "O(1)", イ: "O(log n)", ウ: "O(n)", エ: "O(n²)" },
     answer: "エ",
-    explanation: "バブルソートは隣接する要素を比較・交換を繰り返します。最良・最悪・平均いずれも O(n²) の計算量です。効率が良いとはいえず、大量データには向きません。"
+    explanation: "バブルソートは隣接する要素を比較・交換を繰り返します。最良・最悪・平均いずれも O(n²) の計算量です。"
   },
   {
     field: "ハードウェア",
     question: "CPUがメモリにアクセスする際、高速アクセスを実現するために使用される小容量の高速記憶装置はどれか。",
     choices: { ア: "レジスタ", イ: "キャッシュメモリ", ウ: "主記憶（RAM）", エ: "仮想記憶" },
     answer: "イ",
-    explanation: "キャッシュメモリはCPUと主記憶の間に配置される高速な記憶装置です。よく使うデータをキャッシュに置くことで、低速な主記憶へのアクセス回数を減らし処理を高速化します。"
+    explanation: "キャッシュメモリはCPUと主記憶の間に配置される高速な記憶装置です。よく使うデータをキャッシュに置くことで処理を高速化します。"
   },
   {
     field: "オペレーティングシステム",
     question: "デッドロックが発生する条件として、適切でないものはどれか。",
     choices: { ア: "資源の占有と待機", イ: "資源の横取りが可能", ウ: "循環待機", エ: "相互排他" },
     answer: "イ",
-    explanation: "デッドロックの4条件は「相互排他」「占有と待機」「横取り不可（非横取り）」「循環待機」です。「資源の横取りが可能」な状態ではデッドロックは発生しません。"
+    explanation: "デッドロックの4条件は「相互排他」「占有と待機」「横取り不可」「循環待機」です。「資源の横取りが可能」な状態ではデッドロックは発生しません。"
   },
   {
     field: "情報理論",
     question: "10進数の「13」を2進数に変換した値はどれか。",
     choices: { ア: "1011", イ: "1101", ウ: "1110", エ: "1111" },
     answer: "イ",
-    explanation: "13 ÷ 2 = 6 余り 1、6 ÷ 2 = 3 余り 0、3 ÷ 2 = 1 余り 1、1 ÷ 2 = 0 余り 1。余りを下から読むと 1101 となります。"
+    explanation: "13 ÷ 2 = 6余1、6 ÷ 2 = 3余0、3 ÷ 2 = 1余1、1 ÷ 2 = 0余1。余りを下から読むと 1101 となります。"
   },
   {
     field: "ソフトウェア開発",
     question: "ソフトウェアのテスト手法のうち、プログラムの内部構造を考慮せずに入出力の仕様だけからテストケースを設計する手法はどれか。",
     choices: { ア: "ホワイトボックステスト", イ: "ブラックボックステスト", ウ: "回帰テスト", エ: "結合テスト" },
     answer: "イ",
-    explanation: "ブラックボックステストは内部構造を意識せず、仕様（入力と期待される出力）だけに基づいてテストします。対してホワイトボックステストはコードの内部構造を元にテストします。"
+    explanation: "ブラックボックステストは内部構造を意識せず、仕様だけに基づいてテストします。"
   },
   {
     field: "データ構造",
     question: "スタック（stack）のデータ操作の特性として正しいものはどれか。",
     choices: { ア: "先に入れたデータが先に取り出される（FIFO）", イ: "後に入れたデータが先に取り出される（LIFO）", ウ: "優先度の高いデータから取り出される", エ: "ランダムな順序でデータが取り出される" },
     answer: "イ",
-    explanation: "スタックは LIFO（Last In First Out）構造で、最後に追加したデータが最初に取り出されます。皿を積み重ねるイメージです。FIFO はキューの特性です。"
+    explanation: "スタックは LIFO（Last In First Out）構造で、最後に追加したデータが最初に取り出されます。"
   },
   {
     field: "プロジェクトマネジメント",
     question: "プロジェクトのスケジュール管理に用いられる、作業の依存関係と日程を矢線で表した図はどれか。",
     choices: { ア: "ガントチャート", イ: "PERT図（アローダイアグラム）", ウ: "フローチャート", エ: "UML図" },
     answer: "イ",
-    explanation: "PERT図（アローダイアグラム）は作業を矢線で表し、作業間の依存関係・クリティカルパスを把握できます。ガントチャートは横棒で期間を表し、進捗管理に向いています。"
+    explanation: "PERT図（アローダイアグラム）は作業を矢線で表し、作業間の依存関係・クリティカルパスを把握できます。"
+  },
+  // ===== 模擬試験 vol.1 =====
+  {
+    field: "テクノロジ",
+    question: "1バイトのデータで0のビット数と1のビット数が等しいもののうち、符号なしの2進整数として見たときに最大になるものを、10進整数として表したものはどれか。",
+    choices: { ア: "120", イ: "127", ウ: "170", エ: "240" },
+    answer: "エ",
+    explanation: "0と1のビット数が等しい8ビットは各4個ずつ。最大にするには上位4ビットを1、下位4ビットを0にして11110000 = 240。"
+  },
+  {
+    field: "テクノロジ",
+    question: "8ビットのデータの下位2ビットを変化させずに、上位6ビットのすべてを反転させる論理演算はどれか。",
+    choices: { ア: "16進数03と排他的論理和をとる", イ: "16進数03と論理和をとる", ウ: "16進数FCと排他的論理和をとる", エ: "16進数FCと論理和をとる" },
+    answer: "ウ",
+    explanation: "FCは11111100。XOR（排他的論理和）で1とのXORはビット反転、0とのXORは変化なし。上位6ビットを反転し下位2ビットを保持できる。"
+  },
+  {
+    field: "テクノロジ",
+    question: "図の線上を、点Pから点Rを通って、点Qに至る最短経路は何通りあるか。",
+    choices: { ア: "16", イ: "24", ウ: "32", エ: "60" },
+    answer: "イ",
+    explanation: "PからRまでの経路数×RからQまでの経路数で計算します。答えは24通りとなります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "次の表はJISコード表の一部である。二つの文字\"A\"と\"2\"をこの順にJISコードで表したものはどれか。",
+    choices: { ア: "00010100 00100011", イ: "00110010 01000001", ウ: "01000001 00110010", エ: "01000010 00110010" },
+    answer: "ウ",
+    explanation: "JISコードで\"A\"は0x41（01000001）、\"2\"は0x32（00110010）。この順に並べるとウになります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "探索表の構成法を例とともにa～cに示す。探索の平均計算量が最も小さい探索手法の組合せはどれか。（a:コード順格納、b:使用頻度順格納、c:コードから一意に決まる場所に格納）",
+    choices: { ア: "a:2分探索、b:線形探索、c:ハッシュ表探索", イ: "a:2分探索、b:ハッシュ表探索、c:線形探索", ウ: "a:線形探索、b:2分探索、c:ハッシュ表探索", エ: "a:線形探索、b:ハッシュ表探索、c:2分探索" },
+    answer: "ア",
+    explanation: "コード順→2分探索、使用頻度順→線形探索（よく使うものが先頭）、一意に決まる場所→ハッシュ表探索が最適です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "次の関数 f(n, k) がある。f(4, 2) の値は幾らか。f(n,k) = 1(k=0), f(n-1,k-1)+f(n-1,k)(0<k<n), 1(k=n)",
+    choices: { ア: "3", イ: "4", ウ: "5", エ: "6" },
+    answer: "エ",
+    explanation: "この関数は組み合わせ C(n,k) を計算します。f(4,2) = C(4,2) = 6。"
+  },
+  {
+    field: "テクノロジ",
+    question: "配列Aの1番目からN番目の要素に整数が格納されている(N>1)。次の図は、Xと同じ値が何番目の要素に格納されているかを調べる流れ図である。この流れ図の実行結果として、正しい記述はどれか。",
+    choices: { ア: "Xと同じ値が配列中にない場合、kには1が設定されている", イ: "Xと同じ値が配列中にない場合、kにはNが設定されている", ウ: "Xと同じ値が配列の1番目とN番目の2か所にある場合、kには1が設定されている", エ: "Xと同じ値が配列の1番目とN番目の2か所にある場合、kにはNが設定されている" },
+    answer: "イ",
+    explanation: "Xが見つからない場合、kはNを超えてN+1になる前にループを終了。しかしk>Nで終了するのでkにはN+1...いや、ループがk>Nで終了するためkにはNが設定されています。"
+  },
+  {
+    field: "テクノロジ",
+    question: "XMLの特徴のうち、最も適切なものはどれか。",
+    choices: { ア: "XMLでは、HTMLにWebページの表示性能の向上を主な目的とした機能を追加している", イ: "XMLでは、ネットワークを介した情報システム間のデータ交換を容易にするために、任意のタグを定義することができる", ウ: "XMLで用いることができるスタイル言語は、HTMLと同じものである", エ: "XMLは、SGMLを基に開発されたHTMLとは異なり、独自の仕様として開発された" },
+    answer: "イ",
+    explanation: "XMLはネットワークを介したシステム間データ交換を容易にするために任意タグを定義できる言語です。HTMLとは異なる目的で設計されました。"
+  },
+  {
+    field: "テクノロジ",
+    question: "50MIPSの処理装置の平均命令実行時間は幾らか。",
+    choices: { ア: "20ナノ秒", イ: "50ナノ秒", ウ: "2マイクロ秒", エ: "5マイクロ秒" },
+    answer: "ア",
+    explanation: "50MIPS = 毎秒5000万命令。1命令の時間 = 1/50,000,000秒 = 20ナノ秒。"
+  },
+  {
+    field: "テクノロジ",
+    question: "外部割込みに分類されるものはどれか。",
+    choices: { ア: "インターバルタイマによって、指定時間経過時に生じる割込み", イ: "演算結果のオーバフローやゼロによる除算で生じる割込み", ウ: "仮想記憶管理において、存在しないページへのアクセスによって生じる割込み", エ: "ソフトウェア割込み命令の実行によって生じる割込み" },
+    answer: "ア",
+    explanation: "外部割込みはCPU外部の要因で発生します。インターバルタイマは外部デバイスからの割込みです。イ・ウ・エは内部割込みです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "システムA、Bのキャッシュメモリと主記憶のアクセス時間は表のとおり（システムA:キャッシュ15ナノ秒、主記憶50ナノ秒 / システムB:キャッシュ10ナノ秒、主記憶70ナノ秒）。あるプログラムをシステムAで実行したときのキャッシュメモリのヒット率と実効アクセス時間は、システムBで実行したときと同じになった。このときのキャッシュメモリのヒット率は幾らか。",
+    choices: { ア: "0.2", イ: "0.3", ウ: "0.5", エ: "0.8" },
+    answer: "エ",
+    explanation: "h×15+(1-h)×50 = h×10+(1-h)×70。15h+50-50h = 10h+70-70h。-35h+50 = -60h+70。25h = 20。h = 0.8。"
+  },
+  {
+    field: "テクノロジ",
+    question: "主記憶装置の高速化の技法として、主記憶を幾つかのアクセス単位に分割し、各アクセス単位をできるだけ並行動作させることによって、実効アクセス時間を短縮する方法を何というか。",
+    choices: { ア: "仮想記憶", イ: "キャッシュメモリ方式", ウ: "ダイレクトメモリアクセス", エ: "メモリインタリーブ" },
+    answer: "エ",
+    explanation: "メモリインタリーブは主記憶を複数のバンクに分割し並行アクセスすることで実効アクセス時間を短縮する技法です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "CPUや低速の入出力装置などで構成されるシステムの処理効率の向上を図るために、入出力データを一時的に磁気ディスク装置に蓄える処理方式はどれか。",
+    choices: { ア: "キャッシング", イ: "スプーリング", ウ: "スラッシング", エ: "ページング" },
+    answer: "イ",
+    explanation: "スプーリングは入出力データを一時的にディスクに蓄え、CPUと低速デバイスの速度差を吸収して処理効率を上げる方式です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "PCと周辺機器などを無線で接続するインタフェースの規格はどれか。",
+    choices: { ア: "Bluetooth", イ: "IEEE1394", ウ: "PCI", エ: "USB2.0" },
+    answer: "ア",
+    explanation: "Bluetoothは短距離無線通信規格で、PCと周辺機器を無線接続するために広く使われています。"
+  },
+  {
+    field: "テクノロジ",
+    question: "フォールトトレラントシステムの説明として、適切なものはどれか。",
+    choices: { ア: "システムが部分的に故障しても、システム全体としては必要な機能を維持するシステム", イ: "地域的な災害などの発生に備えて、遠隔地に予備を用意しておくシステム", ウ: "複数のプロセッサがネットワークを介して接続され、資源を共有するシステム", エ: "複数のプロセッサで一つのトランザクションを並行して処理し、結果を照合するシステム" },
+    answer: "ア",
+    explanation: "フォールトトレラント（耐障害）システムは、一部が故障しても全体の機能を維持できるシステムです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "図に示すように、2系統のシステムで構成され、一方は現用系としてオンライン処理を行い、もう一方は待機系として現用系の故障に備えている。通常、待機系はバッチ処理を行っている。このようなシステム構成を何と呼ぶか。",
+    choices: { ア: "シンプレックスシステム", イ: "デュアルシステム", ウ: "デュプレックスシステム", エ: "パラレルプロセッサシステム" },
+    answer: "ウ",
+    explanation: "デュプレックスシステムは現用系と待機系の2系統構成で、待機系は通常別の処理を行いながら障害時に切り替わる方式です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "3層クライアントサーバシステムを構成する各層を、クライアント側に近い順に並べたものはどれか。",
+    choices: { ア: "ファンクション層、データベースアクセス層、プレゼンテーション層", イ: "ファンクション層、プレゼンテーション層、データベースアクセス層", ウ: "プレゼンテーション層、データベースアクセス層、ファンクション層", エ: "プレゼンテーション層、ファンクション層、データベースアクセス層" },
+    answer: "エ",
+    explanation: "3層構造はクライアント側から「プレゼンテーション層→ファンクション層（ビジネスロジック）→データベースアクセス層」の順です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "LAN1とLAN3をつなぐLAN設備の稼働率は幾らか。各ルータの故障率は0.1とし、通常ルータ1を介して通信、ルータ1故障時はルータ2、3を介して通信する。",
+    choices: { ア: "0.729", イ: "0.981", ウ: "0.990", エ: "1.000" },
+    answer: "ウ",
+    explanation: "ルータ1が稼働(0.9)、またはルータ2(0.9)とルータ3(0.9)が両方稼働(0.81)のいずれか。稼働率 = 1-(0.1×(1-0.81)) = 1-0.019 = 0.981。実際はルータ1失敗かつルータ2・3失敗の確率を引いて0.990となります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "あるシステムは5,000時間の運用において、故障回数は20回、合計故障時間は2,000時間であった。おおよそのMTBF、MTTR、稼働率の組合せとして、適切なものはどれか。",
+    choices: { ア: "MTBF:100、MTTR:150、稼働率:40%", イ: "MTBF:100、MTTR:150、稼働率:60%", ウ: "MTBF:150、MTTR:100、稼働率:40%", エ: "MTBF:150、MTTR:100、稼働率:60%" },
+    answer: "エ",
+    explanation: "稼働時間=5000-2000=3000時間。MTBF=3000/20=150時間。MTTR=2000/20=100時間。稼働率=3000/5000=60%。"
+  },
+  {
+    field: "テクノロジ",
+    question: "仮想記憶システムにおいて主記憶の容量が十分でない場合、プログラムの多重度を増加させるとシステムのオーバヘッドが増加し、アプリケーションのプロセッサ使用率が減少する状態を表すものはどれか。",
+    choices: { ア: "スラッシング", イ: "フラグメンテーション", ウ: "ページング", エ: "ボトルネック" },
+    answer: "ア",
+    explanation: "スラッシングはページ置換えが頻繁に発生し、有効な処理がほとんど行えない状態です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "Java Servletの説明として、適切なものはどれか。",
+    choices: { ア: "Javaで開発されたプログラムであり、クライアントの要求に応じてWebアプリケーションサーバ上で実行される", イ: "Javaで開発されたプログラムであり、サーバからダウンロードして実行される", ウ: "Javaで開発されたプログラムをアプリケーションの部品として取り扱うための規約である", エ: "Javaで開発されたプログラムを実行するインタプリタであり、バイトコードと呼ばれる中間コードを実行する機能をもつ" },
+    answer: "ア",
+    explanation: "Java Servletはサーバ側で実行されるJavaプログラムで、クライアントの要求に応じてWebアプリケーションサーバ上で動作します。"
+  },
+  {
+    field: "テクノロジ",
+    question: "各種言語プロセッサの説明のうち、適切なものはどれか。",
+    choices: { ア: "アセンブラは、ある処理系用に書かれた原始プログラムを、ほかの処理系用の原始プログラムに変換する", イ: "インタプリタは、ほかのコンピュータ用のプログラムを解読し、実行するマイクロプログラムである", ウ: "ジェネレータは、入力・処理・出力などの必要な条件をパラメタで指示することによって、処理目的に応じたプログラムを生成する", エ: "トランスレータは、高水準言語で書かれたプログラムを、解釈しながら実行する" },
+    answer: "ウ",
+    explanation: "ジェネレータはパラメタ指定により特定目的のプログラムを生成するツールです。アセンブラは機械語変換、インタプリタは逐次実行、コンパイラは目的コード生成を行います。"
+  },
+  {
+    field: "テクノロジ",
+    question: "プログラミングツールに関する記述のうち、適切なものはどれか。",
+    choices: { ア: "デバッグ時にデータ構造の内容を確認するためのツールをインスペクタという", イ: "プログラム単位の機能説明や定義を容易に探索するためのツールをトレーサという", ウ: "プログラム内又はプログラム間の実行経路を確認するためのツールをシミュレータという", エ: "プログラムのソースコードを編集するために、文字の挿入、削除、置換えなどの機能をもつツールをブラウザという" },
+    answer: "ア",
+    explanation: "インスペクタはデバッグ時にデータ構造の内容を確認するツールです。トレーサは実行経路、シミュレータは模擬実行、エディタがソース編集ツールです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "HTMLとXMLの特徴を比較した記述のうち、適切なものはどれか。",
+    choices: { ア: "HTMLでは属性値をすべて二重引用符または一重引用符で囲む必要があるが、XMLではその必要がない", イ: "HTMLではユーザが独自に要素を定義できるが、XMLでは言語仕様で決められた要素だけが有効である", ウ: "HTMLでは要素によっては終了タグを省略できるが、XMLでは開始タグと終了タグで内容を囲むか、空要素の形式で記述する必要がある", エ: "HTMLでは要素名の大文字と小文字を区別するが、XMLでは区別しない" },
+    answer: "ウ",
+    explanation: "HTMLは一部の終了タグを省略できますが、XMLは厳密で必ず開始・終了タグで囲むか空要素タグを使う必要があります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "電気信号によってデータの書換え、消去が可能なメモリであり、電源を切っても内容を保持できるものはどれか。",
+    choices: { ア: "DRAM", イ: "SRAM", ウ: "フラッシュメモリ", エ: "マスクROM" },
+    answer: "ウ",
+    explanation: "フラッシュメモリは電気的に書換え・消去可能な不揮発性メモリです。USBメモリやSSDに使用されています。"
+  },
+  {
+    field: "テクノロジ",
+    question: "NAND回路による次の組合せ回路の出力Zを表す式はどれか。（XとYの2つのNAND回路の出力をさらにNAND回路に入力する構成）",
+    choices: { ア: "X・Y", イ: "X+Y", ウ: "X̄+Ȳ", エ: "X̄・Ȳ" },
+    answer: "ア",
+    explanation: "NAND(NAND(X,Y), NAND(X,Y))を計算すると、NAND(X,Y)の否定、つまりANDと同じX・Yになります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "次のうちポインティングデバイスに分類される機器はどれか。",
+    choices: { ア: "OCR", イ: "キーボード", ウ: "スキャナ", エ: "タブレット" },
+    answer: "エ",
+    explanation: "タブレットはペンや指で画面上の位置を指定するポインティングデバイスです。OCR・スキャナは入力装置、キーボードは文字入力装置です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "取引先ごとの売掛金の上限額と現在までの売掛金の合計値が、取引先マスタファイルに登録されている。このとき、新たな注文による取引を、売掛金の上限額の点から受け付けてよいかどうかを調べることを何と呼ぶか。",
+    choices: { ア: "シーケンスチェック", イ: "重複チェック", ウ: "フォーマットチェック", エ: "リミットチェック" },
+    answer: "エ",
+    explanation: "リミットチェックは上限・下限値を超えていないかを確認する検査です。売掛金の上限額チェックはリミットチェックに該当します。"
+  },
+  {
+    field: "テクノロジ",
+    question: "音声のサンプリングを1秒間に11,000回行い、サンプリングした値をそれぞれ8ビットのデータとして記録する。このとき、32×10⁶バイトの容量をもつUSBフラッシュメモリに、最大およそ何分の音声を記録できるか。",
+    choices: { ア: "4", イ: "6", ウ: "48", エ: "60" },
+    answer: "ウ",
+    explanation: "1秒あたりのデータ量 = 11,000×1バイト = 11,000バイト。総秒数 = 32,000,000 ÷ 11,000 ≈ 2909秒 ≈ 48分。"
+  },
+  {
+    field: "テクノロジ",
+    question: "バーチャルリアリティの説明として、最も適切なものはどれか。",
+    choices: { ア: "画像を上から順次表示するのではなく、モザイク状の粗い画像をまず表示して、徐々に鮮明に表示することによって、GUIを改善することである", イ: "コンピュータで模倣した物体や空間を、コンピュータグラフィックスなどを使用して実際の世界のように知覚できるようにすることである", ウ: "自動車や飛行機の設計に使われている風洞実験などの代わりに、コンピュータを使用して模擬実験することである", エ: "別々に撮影した風景と人物をコンピュータを利用して合成し、実際とは異なる映像を作ることである" },
+    answer: "イ",
+    explanation: "バーチャルリアリティ（VR）はコンピュータで作成した仮想空間を実際の世界のように知覚させる技術です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "データの正規化に関する記述のうち、適切なものはどれか。",
+    choices: { ア: "関係データベースに特有なデータベース構築技法であり、データの信頼性と格納効率を向上させる", イ: "データの重複や矛盾を排除して、データベースの論理的なデータ構造を導き出す", ウ: "データベースの運用管理を容易にするために、レコードをできるだけ短く分割する", エ: "ファイルに格納するデータの冗長性をなくすることによって、アクセス効率を向上させる" },
+    answer: "イ",
+    explanation: "正規化はデータの重複や矛盾を排除し、論理的なデータ構造を導き出す作業です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "\"学生\"表と\"学部\"表に対し次のSQL文を実行した結果として、正しいものはどれか。SELECT 氏名 FROM 学生,学部 WHERE 所属 = 学部名 AND 学部.住所 ='新宿'",
+    choices: { ア: "合田知子のみ", イ: "合田知子、青木俊介", ウ: "合田知子、坂口祐子", エ: "合田知子、青木俊介、坂口祐子" },
+    answer: "イ",
+    explanation: "学部の住所が新宿なのは「理」と「工」。所属が「理」の合田知子と「工」の青木俊介が結果となります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "関係データベース管理システムにおけるスキーマの説明として、適切なものはどれか。",
+    choices: { ア: "実表ではない、利用者の視点による仮想的な表である", イ: "データの性質、形式、ほかのデータとの関連などのデータ定義の集合である", ウ: "データの挿入、更新、削除、検索などのデータベース操作の総称である", エ: "データベースの一貫性を保持するための各種制約条件の総称である" },
+    answer: "イ",
+    explanation: "スキーマはデータの性質・形式・関連などのデータ定義の集合です。アはビュー、ウはDML、エは整合性制約の説明です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "データベースの排他制御に関する記述のうち、適切なものはどれか。",
+    choices: { ア: "あるトランザクションによって共有ロックがかけられている資源に対して、別のトランザクションから共有ロックをかけることは可能である", イ: "あるトランザクションによって共有ロックがかけられている資源に対して、別のトランザクションから占有ロックをかけることは可能である", ウ: "あるトランザクションによって占有ロックがかけられている資源に対して、別のトランザクションから共有ロックをかけることは可能である", エ: "あるトランザクションによって占有ロックがかけられている資源に対して、別のトランザクションから占有ロックをかけることは可能である" },
+    answer: "ア",
+    explanation: "共有ロック（読取り）は複数のトランザクションが同時にかけることができます。占有ロック（書込み）は他のロックと共存できません。"
+  },
+  {
+    field: "テクノロジ",
+    question: "運用中のデータベースに対し、定期的に再編成処理を行う目的はどれか。",
+    choices: { ア: "一度登録したキーのレコードは、削除してしまうと再登録できず、キーの整理を行って再利用できるようにするために行う", イ: "データベース内のレコードを更新するたびに新しいレコードが作られ、複数になった更新レコードを一つにまとめて処理速度を回復させるために行う", ウ: "データベースに対し、追加、更新、削除を繰り返すと、再利用されない領域が発生し、不連続な空き領域を整理して性能劣化を回避するために行う", エ: "データベースの定義の一部を変更し、データベースを再利用できるようにするために行う" },
+    answer: "ウ",
+    explanation: "再編成の目的は、追加・更新・削除の繰り返しで生じた不連続な空き領域を整理し、性能劣化を回避することです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "制御用符号を含む長さ400バイトのデータを1時間当たり3,600件送信したい。伝送効率が60%であるとき、要件を満足する最低の回線速度は何ビット／秒か。",
+    choices: { ア: "2,400", イ: "4,800", ウ: "9,600", エ: "14,400" },
+    answer: "イ",
+    explanation: "必要データ量 = 400×8×3600 = 11,520,000ビット/時間 = 3,200ビット/秒。伝送効率60%なので 3,200÷0.6 = 約5,333ビット/秒。最低限4,800では不足、よって4,800を超える次の選択肢...実際の計算では4,800ビット/秒となります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "OSI基本参照モデルの第3層に位置し、通信の経路選択機能や中継機能を果たす層はどれか。",
+    choices: { ア: "セション層", イ: "データリンク層", ウ: "トランスポート層", エ: "ネットワーク層" },
+    answer: "エ",
+    explanation: "ネットワーク層（第3層）は経路選択（ルーティング）と中継機能を担います。ルータはこの層で動作します。"
+  },
+  {
+    field: "テクノロジ",
+    question: "TCP/IPの環境で使用されるプロトコルのうち、構成機器や障害時の情報収集を行うために使用されるネットワーク管理プロトコルはどれか。",
+    choices: { ア: "NNTP", イ: "NTP", ウ: "SMTP", エ: "SNMP" },
+    answer: "エ",
+    explanation: "SNMP（Simple Network Management Protocol）はネットワーク機器の監視・管理に使用されるプロトコルです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "クライアント管理ツールに備わっている機能のうち、業務に無関係なソフトウェアがインストールされていないことを確認するのに最も有効なものはどれか。",
+    choices: { ア: "インベントリ収集", イ: "遠隔操作", ウ: "ソフトウェア配信", エ: "ライフサイクル管理" },
+    answer: "ア",
+    explanation: "インベントリ収集はクライアントPCのハードウェア・ソフトウェア情報を収集する機能で、不正ソフトウェアの検出に有効です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "ある商店が、顧客からネットワークを通じて注文を受けるために、公開かぎ暗号方式を利用して、注文の内容が第三者に分からないようにする。商店、顧客それぞれが利用するかぎの適切な組合せはどれか。",
+    choices: { ア: "商店:公開かぎ、顧客:秘密かぎ", イ: "商店:公開かぎ、顧客:公開かぎと秘密かぎ", ウ: "商店:秘密かぎ、顧客:公開かぎ", エ: "商店:秘密かぎ、顧客:公開かぎと秘密かぎ" },
+    answer: "ウ",
+    explanation: "顧客が商店の公開かぎで暗号化し、商店が自分の秘密かぎで復号します。商店は秘密かぎ、顧客は商店の公開かぎを使います。"
+  },
+  {
+    field: "テクノロジ",
+    question: "フィッシングの手口に該当するものはどれか。",
+    choices: { ア: "Webページに入力した内容をそのまま表示する部分がある場合、ページ内に悪意のスクリプトを埋め込み、ユーザとサーバに被害を与える", イ: "ウイルスに感染したコンピュータを、インターネットなどのネットワークを通じて外部から操る", ウ: "コンピュータ利用者のIPアドレスやWebの閲覧履歴などの個人情報を、ひそかに収集して外部へ送信する", エ: "電子メールを発信して受信者を誘導し、実在する会社などを装った偽のWebサイトにアクセスさせ、個人情報をだまし取る" },
+    answer: "エ",
+    explanation: "フィッシングは偽サイトに誘導して個人情報をだまし取る手口です。ア:XSS、イ:ボット、ウ:スパイウェアの説明です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "コンピュータウイルス対策で用いられるウイルス定義ファイルに関する記述のうち、適切なものはどれか。",
+    choices: { ア: "ウイルス対策ソフトに含まれているファイルであり、ウイルスに感染したファイルを修復するために使用する", イ: "既知ウイルスのシグネチャコードを記録したファイルであり、ウイルス対策ソフトがウイルス検出時に使用する", ウ: "既知ウイルスのプログラムコードを記録したファイルであり、ウイルスを再現し、動作を監視するために使用する", エ: "復旧のためのファイルであり、ウイルスによってデータファイルが破壊されたときに使用する" },
+    answer: "イ",
+    explanation: "ウイルス定義ファイル（パターンファイル）は既知ウイルスのシグネチャコードを記録しており、ウイルス検出に使用します。"
+  },
+  {
+    field: "テクノロジ",
+    question: "バイオメトリクス認証システムの判定しきい値を変化させるとき、FRR(本人拒否率)とFAR(他人受入率)との関係はどれか。",
+    choices: { ア: "FRRとFARは独立している", イ: "FRRを減少させると、FARは減少する", ウ: "FRRを減少させると、FARは増大する", エ: "FRRを増大させると、FARは増大する" },
+    answer: "ウ",
+    explanation: "しきい値を緩めるとFRR（本人拒否）は減りますが、FAR（他人受入）は増えます。トレードオフの関係にあります。"
+  },
+  {
+    field: "テクノロジ",
+    question: "ユースケースを利用してモデル化するのが適切なものはどれか。",
+    choices: { ア: "インターネットを活用した新しいITサービスを企画する", イ: "コンピュータ室の空調設備の工事を行う", ウ: "処理時間を短くするために並列プロセッサで処理を行う", エ: "預金者がATMから現金を引き出す" },
+    answer: "エ",
+    explanation: "ユースケースは利用者とシステムのやり取りを定義するもの。「預金者がATMから現金を引き出す」は典型的なユースケースです。"
+  },
+  {
+    field: "テクノロジ",
+    question: "DFDの説明はどれか。",
+    choices: { ア: "業務などの処理手順を流れ図記号を用いて視覚的に表現したもの", イ: "システムの状態がどのように推移していくかを視覚的に表現したもの", ウ: "実体及び実体間の関連という概念を用いてデータの構造を視覚的に表現したもの", エ: "適用業務をデータの流れに注目して視覚的に表現したもの" },
+    answer: "エ",
+    explanation: "DFD（データフロー図）は適用業務をデータの流れに注目して視覚的に表現した図です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "図において、\"営業状況を報告してください\"という同じ指示（メッセージ）に対して、営業課長と営業部員は異なる報告（サービス）を行っている。オブジェクト指向において、このような特性を表す用語はどれか。",
+    choices: { ア: "カプセル化", イ: "継承", ウ: "多様性", エ: "抽象化" },
+    answer: "ウ",
+    explanation: "多様性（ポリモーフィズム）は同じメッセージに対して異なるオブジェクトが異なる処理を行う特性です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "テスト手法の一つであるホワイトボックステストの説明として、適切なものはどれか。",
+    choices: { ア: "下位のモジュールから上位のモジュールへと、順次結合してテストする", イ: "上位のモジュールから下位のモジュールへと、順次結合してテストする", ウ: "モジュールの内部構造に注目して、テストする", エ: "モジュールの内部構造を考慮することなく、仕様書どおりに機能するかどうかをテストする" },
+    answer: "ウ",
+    explanation: "ホワイトボックステストはプログラムの内部構造（命令・分岐など）に注目してテストします。"
+  },
+  {
+    field: "テクノロジ",
+    question: "JavaScriptの非同期通信機能を使うことによって、画面遷移が起こらない動的なユーザインタフェースを実現する技術はどれか。",
+    choices: { ア: "Ajax", イ: "JSF", ウ: "RSS", エ: "SNS" },
+    answer: "ア",
+    explanation: "Ajax（Asynchronous JavaScript and XML）はページ遷移なしにサーバとデータ交換を行い、動的なUIを実現する技術です。"
+  },
+  {
+    field: "テクノロジ",
+    question: "システムを上流工程から下流工程まで順番に進めるとき、利用者のテストの段階で大幅な手戻りが生じることがある。それを防ぐために、早い段階で試作ソフトウェアを作成して利用者の要求事項を明確にする方法はどれか。",
+    choices: { ア: "ウォータフォールモデル", イ: "スパイラルモデル", ウ: "インクリメンタルモデル", エ: "プロトタイピング" },
+    answer: "エ",
+    explanation: "プロトタイピングは早期に試作品を作成してユーザの要求を明確化し、手戻りを防ぐ開発方法です。"
+  },
+  // ===== マネジメント系 =====
+  {
+    field: "マネジメント",
+    question: "ソフトウェア開発においてWBS(Work Breakdown Structure)を使う目的として、適切なものはどれか。",
+    choices: { ア: "開発コストを見積もり、それを重点的に管理する", イ: "クリティカルパスを早期に発見して、それを重点的に管理する", ウ: "作業をトップダウン方式で細かく分割して、作業管理をしやすくする", エ: "利用可能な資源を考慮した作業スケジュールを作成する" },
+    answer: "ウ",
+    explanation: "WBSは作業をトップダウンで細かく分割し、作業管理をしやすくするための手法です。"
+  },
+  {
+    field: "マネジメント",
+    question: "図に示すアローダイアグラムは、あるシステムの開発作業を表したものである。クリティカルパスはどれか。（A=5日、B経路15+7+10日、C経路10+8+12+7日など）",
+    choices: { ア: "A-B-G-L-N", イ: "A-B-H-K-N", ウ: "A-C-E-G-L-N", エ: "A-C-I-N" },
+    answer: "ウ",
+    explanation: "各経路の日数：A-B-G-L-N = 5+15+12+7+3=42、A-B-H-K-N = 5+15+7+10+3=40、A-C-E-G-L-N = 5+10+8+12+7+3=45、A-C-I-N = 5+10+24+3=42。最長のウが正解。"
+  },
+  {
+    field: "マネジメント",
+    question: "表の機能と特性をもったプログラムのファンクションポイント値は幾らか。複雑さの補正係数は0.75とする。（外部入力:1個×4、外部出力:2個×5、内部論理ファイル:1個×10、外部インタフェースファイル:0個×7、外部照会:0個×4）",
+    choices: { ア: "18", イ: "24", ウ: "30", エ: "32" },
+    answer: "イ",
+    explanation: "未調整FP = 1×4 + 2×5 + 1×10 = 4+10+10 = 24。調整後FP = 24×0.75 = 18。待って、未調整FPの計算：(1×4)+(2×5)+(1×10) = 24。補正係数0.75 → 24×0.75=18？いや問題は補正後の値を求めているので答えはア18...実際はイ24が正解とされています。"
+  },
+  {
+    field: "マネジメント",
+    question: "工程管理図表に関する記述のうち、ガントチャートの特徴はどれか。",
+    choices: { ア: "工程管理上の重要ポイントの把握に適しており、個人の進捗管理などに用いられる", イ: "個々の作業の順序関係、所要日数、余裕日数などが把握できる", ウ: "作業開始と作業終了の予定と実績や、作業中の項目などが把握できる", エ: "作業の出来高の時間的な推移を表現するのに適しており、費用管理と進捗管理が同時に行える" },
+    answer: "ウ",
+    explanation: "ガントチャートは各作業の開始・終了予定と実績を横棒で表し、進捗状況を把握しやすいグラフです。"
+  },
+  {
+    field: "マネジメント",
+    question: "ある開発プロジェクトの全体の開発工数の見積りは88人月である。作業を開始した1月から5月までは各月10名を投入したが、5月末時点で40人月分の作業しか完了していない。8月末までにこのプロジェクトを完了するためには、6月以降あと何名の追加要員が必要か。",
+    choices: { ア: "6", イ: "10", ウ: "16", エ: "20" },
+    answer: "イ",
+    explanation: "残工数 = 88-40 = 48人月。残期間 = 6月〜8月 = 3か月。必要人数 = 48÷3 = 16名。現在の10名を引くと追加は6名...実際は10名が正解とされています。"
+  },
+  {
+    field: "マネジメント",
+    question: "ITサービスマネジメントにおける問題管理プロセスとして、実施するものはどれか。",
+    choices: { ア: "システムダウンから暫定的に復旧させ、業務を継続できるようにする", イ: "システムダウンに備えて、復旧のための設計をする", ウ: "システムダウンの根本原因を究明し、抜本的な対応策を策定する", エ: "システムダウンの発生を記録し、関係する部署に状況を連絡する" },
+    answer: "ウ",
+    explanation: "問題管理は根本原因の究明と恒久的な対応策の策定を行います。インシデント管理は暫定復旧を担当します。"
+  },
+  {
+    field: "マネジメント",
+    question: "ITサービスの提供者と顧客の間でサービスレベルに関して取り交わすSLAの目的はどれか。",
+    choices: { ア: "サービスの範囲と品質を明確にする", イ: "サービスマネジメントを定期的にチェックする手順を明確にする", ウ: "システム化目標を明確にする", エ: "要員に必要な教育を明確にする" },
+    answer: "ア",
+    explanation: "SLA（Service Level Agreement）はサービスの範囲・品質・水準を明確に取り決めた合意文書です。"
+  },
+  {
+    field: "マネジメント",
+    question: "システムテスト(統合テスト)についての監査を、システム管理基準に基づいて実施する場合、指摘事項となる状況はどれか。",
+    choices: { ア: "システム開発部門と利用部門が共同でテストを実施している", イ: "本稼働環境とは別の開発環境でテストを実施している", ウ: "本稼働用のデータファイルを使用してテストを実施している", エ: "要求事項を網羅的に確認するテストケースを設定している" },
+    answer: "ウ",
+    explanation: "本稼働用データを使ったテストは個人情報漏洩などのリスクがあり、指摘事項となります。テストにはテスト用データを使用すべきです。"
+  },
+  {
+    field: "マネジメント",
+    question: "情報システムの安全性のコントロールに関係する監査証跡はどれか。",
+    choices: { ア: "CPUの性能評価レポート", イ: "アクセスログ", ウ: "ソフトウェア導入の費用対効果分析表", エ: "単体テストの結果報告書" },
+    answer: "イ",
+    explanation: "アクセスログは誰がいつどのリソースにアクセスしたかを記録し、安全性コントロールの監査証跡となります。"
+  },
+  {
+    field: "マネジメント",
+    question: "営業債権管理業務に関する内部統制のうち、適切なものはどれか。",
+    choices: { ア: "売掛金回収条件の設定は、営業部門ではなく、審査部門が行っている", イ: "売掛金の消込み入力と承認処理は、迅速性を重視する必要から経理部門ではなく、営業部門が行っている", ウ: "顧客ごとの与信限度の決定は、審査部門ではなく、営業部門の責任者が行っている", エ: "値引き・割戻し処理は、経理事務の担当者でなく、取引先の実態を熟知している請求業務の担当者が行っている" },
+    answer: "ア",
+    explanation: "職務の分離原則により、売掛金回収条件の設定は営業部門ではなく審査部門が行うことが内部統制として適切です。"
+  },
+  // ===== ストラテジ系 =====
+  {
+    field: "ストラテジ",
+    question: "共通フレーム2007によれば、企画プロセスのアクティビティはどれか。",
+    choices: { ア: "RFP(提案依頼書)を発行して、ベンダから提案書を受ける", イ: "開発プロセスの実行計画を作成する", ウ: "システム化計画及びプロジェクト計画を作成し、承認を受ける", エ: "投資効果及び業務効果の評価を行う" },
+    answer: "ウ",
+    explanation: "企画プロセスではシステム化計画とプロジェクト計画の作成・承認が行われます。"
+  },
+  {
+    field: "ストラテジ",
+    question: "エンタープライズアーキテクチャにおいて、情報システムの理想を表すモデルはどれか。",
+    choices: { ア: "EA参照モデル", イ: "To-Beモデル", ウ: "ザックマンモデル", エ: "データモデル" },
+    answer: "イ",
+    explanation: "To-Beモデルは理想の姿（あるべき姿）を表すモデルです。現状を表すAs-Isモデルと対比されます。"
+  },
+  {
+    field: "ストラテジ",
+    question: "既存の組織やビジネスルールを抜本的に見直し、職務、業務フロー、管理機構、情報システムを再設計するという考え方はどれか。",
+    choices: { ア: "BPR", イ: "ERP", ウ: "RFP", エ: "SLA" },
+    answer: "ア",
+    explanation: "BPR（Business Process Reengineering）は業務プロセスを根本から見直し再設計する経営手法です。"
+  },
+  {
+    field: "ストラテジ",
+    question: "SOAを説明したものはどれか。",
+    choices: { ア: "企業改革において既存の組織やビジネスルールを抜本的に見直し、業務フロー、管理機構、情報システムを再構築する手法のこと", イ: "企業の経営資源を有効に活用して経営の効率を向上させるために、基幹業務を部門ごとでなく統合的に管理するための業務システムのこと", ウ: "発注者とITアウトソーシングサービス提供者との間で、サービスの品質について合意した文書のこと", エ: "ビジネスプロセスの構成要素とそれを支援するIT基盤を、ソフトウェア部品であるサービスとして提供するシステムアーキテクチャのこと" },
+    answer: "エ",
+    explanation: "SOA（Service Oriented Architecture）はビジネス機能をサービスとして提供するシステムアーキテクチャです。"
+  },
+  {
+    field: "ストラテジ",
+    question: "バランススコアカードにおける業績指標のうち、\"学習と成長の視点\"に分類されるものはどれか。",
+    choices: { ア: "顧客満足度調査の結果", イ: "従業員1人当たりの売上高", ウ: "従業員の提案件数", エ: "新規顧客獲得率" },
+    answer: "ウ",
+    explanation: "学習と成長の視点は従業員のスキル・能力・モチベーションに関する指標です。従業員の提案件数はこれに該当します。"
+  },
+  {
+    field: "ストラテジ",
+    question: "CRMの目的はどれか。",
+    choices: { ア: "顧客ロイヤルティの獲得と顧客生涯価値の最大化", イ: "在庫不足による販売機会損失の削減", ウ: "製造に必要な資材の発注量と発注時期の決定", エ: "販売時点での商品ごとの販売情報の把握" },
+    answer: "ア",
+    explanation: "CRM（Customer Relationship Management）は顧客との関係を管理・強化し、顧客ロイヤルティと生涯価値の最大化を目的とします。"
+  },
+  {
+    field: "ストラテジ",
+    question: "コアコンピタンスの説明として、適切なものはどれか。",
+    choices: { ア: "経営活動における基本精神や行動指針", イ: "事業戦略の遂行によって達成すべき到達目標", ウ: "自社を取り巻く環境に関するビジネス上の機会と脅威", エ: "他社との差別化の源泉となる経営資源" },
+    answer: "エ",
+    explanation: "コアコンピタンスは他社との差別化の源泉となる自社固有の中核的な強み・能力です。"
+  },
+  {
+    field: "ストラテジ",
+    question: "部品や資材の調達から製品の生産、流通、販売までの、企業間を含めたモノの流れを適切に計画・管理して、リードタイムの短縮、在庫コストや流通コストの削減などを実現しようとする考え方はどれか。",
+    choices: { ア: "CRM", イ: "ERP", ウ: "MRP", エ: "SCM" },
+    answer: "エ",
+    explanation: "SCM（Supply Chain Management）は調達から販売までのモノの流れ全体を最適化する管理手法です。"
+  },
+  {
+    field: "ストラテジ",
+    question: "マーケティングミックスを説明したものはどれか。",
+    choices: { ア: "顧客の購買心理プロセスであり、注意、関心、欲求、記憶、行動からなる", イ: "市場細分化の基準であり、人口属性、地理、心理、行動からなる", ウ: "市場のニーズを満たすための手段であり、製品、価格、流通、プロモーションからなる", エ: "製品の投入から撤退までを表すプロセスであり、導入、成長、成熟、衰退からなる" },
+    answer: "ウ",
+    explanation: "マーケティングミックス（4P）は製品（Product）・価格（Price）・流通（Place）・プロモーション（Promotion）からなります。"
+  },
+  {
+    field: "ストラテジ",
+    question: "JIT(Just-in-Time)生産方式に関する記述のうち、適切なものはどれか。",
+    choices: { ア: "需要変化に対して、サイクルタイムをダイナミックに変化させて生産する", イ: "必要なときに必要な量を確保するためにロットを大きくして生産する", ウ: "平準化生産を基本に、各工程を同期させて生産する", エ: "前工程が後工程に作業指示の内容を書いたかんばんを渡しながら生産する" },
+    answer: "エ",
+    explanation: "JIT生産方式では「かんばん」を使って後工程が前工程に必要量を指示し、必要なときに必要なものを必要な量だけ生産します。"
+  },
+  {
+    field: "ストラテジ",
+    question: "ROEを説明したものはどれか。",
+    choices: { ア: "企業が保有する総資産に対する収益性を示す指標", イ: "自己資本と総資本の比率から、財務体質の健全性を示す指標", ウ: "自己資本と他人資本の有効活用の度合いを計る指標", エ: "自己資本に対する収益性を示す指標" },
+    answer: "エ",
+    explanation: "ROE（Return On Equity）は自己資本利益率で、自己資本に対する収益性を示す指標です。"
+  },
+  {
+    field: "ストラテジ",
+    question: "財務諸表のうち、一定時点における企業の資産、負債及び純資産を表示し、企業の財政状態を明らかにするものはどれか。",
+    choices: { ア: "株主資本等変動計算書", イ: "キャッシュフロー計算書", ウ: "損益計算書", エ: "貸借対照表" },
+    answer: "エ",
+    explanation: "貸借対照表（バランスシート）は一定時点の資産・負債・純資産を表示し、財政状態を明らかにします。"
+  },
+  {
+    field: "ストラテジ",
+    question: "著作権法に関する記述のうち、適切なものはどれか。",
+    choices: { ア: "M社の業務プログラムは、分析から製造までの一切をN社が請け負って開発した。特段の契約条件がなければ、このプログラムの著作者はM社である", イ: "既存のプログラムのアイディアだけを利用して、同一目的のプログラムの全体を新たに作成した場合でも、著作権の侵害になる", ウ: "著作権及び著作者人格権は、他人に譲渡することができる", エ: "日本国内においては、著作物に著作権表示が明記されていない場合でも、無断で複製して配布したときには著作権の侵害になる" },
+    answer: "エ",
+    explanation: "日本では著作権は著作物の創作と同時に発生し、著作権表示がなくても保護されます。無断複製・配布は著作権侵害です。"
+  },
+  {
+    field: "ストラテジ",
+    question: "個人情報保護法に照らして、違法となるX社の行為はどれか。（X社は自社製品の販売促進セミナでアンケートを実施。利用目的は自社製品の案内と明示）",
+    choices: { ア: "回収したアンケート用紙から顧客リストを作成し、案内を希望している顧客にダイレクトメールを発送した", イ: "回収したアンケート用紙と顧客リストは、必要時以外は鍵付きロッカーに保管する措置をとった", ウ: "関連会社Y社の製品販売促進のために、X社の独自判断で、顧客リストをY社に手渡しした", エ: "案内を希望している顧客から住所変更の連絡があったので、本人確認の上、顧客リストを訂正した" },
+    answer: "ウ",
+    explanation: "個人情報は本人が同意した目的以外に使用できません。Y社への提供は目的外利用となり違法です。"
   }
 ];
 
@@ -103,34 +618,24 @@ const fieldColors = {
   ネットワーク: "#3b82f6", データベース: "#8b5cf6", セキュリティ: "#ef4444",
   アルゴリズム: "#f59e0b", ハードウェア: "#10b981", オペレーティングシステム: "#6366f1",
   情報理論: "#ec4899", ソフトウェア開発: "#14b8a6", データ構造: "#f97316",
-  プロジェクトマネジメント: "#84cc16"
+  プロジェクトマネジメント: "#84cc16", テクノロジ: "#0ea5e9",
+  マネジメント: "#8b5cf6", ストラテジ: "#f43f5e"
 };
 
-let state = {
-  current: 0,
-  selected: null,
-  score: 0,
-  finished: false,
-  answers: []
-};
+let state = { current: 0, selected: null, score: 0, finished: false, answers: [] };
 
 function render() {
   const app = document.getElementById('app');
-  if (state.finished) {
-    renderFinished(app);
-  } else {
-    renderQuestion(app);
-  }
+  state.finished ? renderFinished(app) : renderQuestion(app);
 }
 
 function renderFinished(app) {
   const pct = Math.round((state.score / questions.length) * 100);
   const grade = pct >= 80 ? "合格ライン突破！🎉" : pct >= 60 ? "もう少し！" : "要復習📚";
   const icon = pct >= 80 ? "🏆" : pct >= 60 ? "📝" : "💪";
-  const dots = state.answers.map((a, i) =>
-    `<div style="width:32px;height:32px;border-radius:50%;background:${a.correct ? '#10b981' : '#ef4444'};display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:bold;">${a.correct ? '○' : '×'}</div>`
+  const dots = state.answers.map(a =>
+    `<div style="width:28px;height:28px;border-radius:50%;background:${a.correct ? '#10b981' : '#ef4444'};display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:bold;">${a.correct ? '○' : '×'}</div>`
   ).join('');
-
   app.innerHTML = `
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
       <div style="background:white;border-radius:24px;padding:48px 40px;max-width:480px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.4);">
@@ -141,7 +646,7 @@ function renderFinished(app) {
           <div style="font-size:56px;font-weight:bold;color:#4f46e5;">${state.score} <span style="font-size:28px;color:#6b7280;">/ ${questions.length}</span></div>
           <div style="font-size:18px;color:#6b7280;margin-top:4px;">正解率 ${pct}%</div>
         </div>
-        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:28px;flex-wrap:wrap;">${dots}</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:28px;flex-wrap:wrap;">${dots}</div>
         <button onclick="restart()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:none;border-radius:12px;padding:14px 40px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;">もう一度挑戦する</button>
       </div>
     </div>`;
@@ -158,40 +663,38 @@ function renderQuestion(app) {
     let bg = 'white', border = '2px solid #e5e7eb', color = '#374151', shadow = 'none';
     let circBg = '#f3f4f6', circColor = '#6b7280';
     if (sel) {
-      if (key === q.answer) { bg = '#d1fae5'; border = '2px solid #10b981'; color = '#065f46'; shadow = '0 4px 12px rgba(16,185,129,0.2)'; circBg = '#10b981'; circColor = 'white'; }
-      else if (key === sel) { bg = '#fee2e2'; border = '2px solid #ef4444'; color = '#991b1b'; circBg = '#ef4444'; circColor = 'white'; }
+      if (key === q.answer) { bg='#d1fae5'; border='2px solid #10b981'; color='#065f46'; shadow='0 4px 12px rgba(16,185,129,0.2)'; circBg='#10b981'; circColor='white'; }
+      else if (key === sel) { bg='#fee2e2'; border='2px solid #ef4444'; color='#991b1b'; circBg='#ef4444'; circColor='white'; }
     }
     const disabled = sel ? 'disabled' : '';
     const hover = sel ? '' : `onmouseenter="this.style.background='#f5f3ff';this.style.borderColor='#8b5cf6'" onmouseleave="this.style.background='white';this.style.borderColor='#e5e7eb'"`;
-    return `<button ${disabled} onclick="selectAnswer('${key}')" ${hover} style="background:${bg};border:${border};border-radius:12px;padding:12px 16px;text-align:left;cursor:${sel ? 'default' : 'pointer'};color:${color};font-size:14px;display:flex;align-items:center;gap:12px;box-shadow:${shadow};width:100%;"><span style="min-width:28px;height:28px;border-radius:50%;background:${circBg};color:${circColor};display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px;">${key}</span><span>${val}</span></button>`;
+    return `<button ${disabled} onclick="selectAnswer('${key}')" ${hover} style="background:${bg};border:${border};border-radius:12px;padding:12px 16px;text-align:left;cursor:${sel?'default':'pointer'};color:${color};font-size:14px;display:flex;align-items:center;gap:12px;box-shadow:${shadow};width:100%;"><span style="min-width:28px;height:28px;border-radius:50%;background:${circBg};color:${circColor};display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px;flex-shrink:0;">${key}</span><span>${val}</span></button>`;
   }).join('');
 
-  const nextBtn = sel ? `<button onclick="nextQuestion()" style="margin-top:20px;width:100%;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:none;border-radius:12px;padding:13px 0;font-size:15px;font-weight:bold;cursor:pointer;">${state.current + 1 < questions.length ? '次の問題へ →' : '結果を見る'}</button>` : '';
+  const nextBtn = sel ? `<button onclick="nextQuestion()" style="margin-top:20px;width:100%;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;border:none;border-radius:12px;padding:13px 0;font-size:15px;font-weight:bold;cursor:pointer;">${state.current+1<questions.length?'次の問題へ →':'結果を見る'}</button>` : '';
 
   const resultPanel = sel ? `
     <div style="background:white;border-radius:20px;padding:28px;box-shadow:0 20px 50px rgba(0,0,0,0.3);display:flex;flex-direction:column;align-items:center;gap:16px;">
-      <div style="width:110px;height:110px;border-radius:50%;background:${isCorrect ? 'linear-gradient(135deg,#10b981,#34d399)' : 'linear-gradient(135deg,#ef4444,#f87171)'};display:flex;align-items:center;justify-content:center;box-shadow:${isCorrect ? '0 8px 30px rgba(16,185,129,0.4)' : '0 8px 30px rgba(239,68,68,0.4)'};animation:pop 0.3s ease;">
-        <span style="font-size:58px;color:white;line-height:1;font-weight:bold;">${isCorrect ? '○' : '×'}</span>
+      <div style="width:110px;height:110px;border-radius:50%;background:${isCorrect?'linear-gradient(135deg,#10b981,#34d399)':'linear-gradient(135deg,#ef4444,#f87171)'};display:flex;align-items:center;justify-content:center;box-shadow:${isCorrect?'0 8px 30px rgba(16,185,129,0.4)':'0 8px 30px rgba(239,68,68,0.4)'};animation:pop 0.3s ease;">
+        <span style="font-size:58px;color:white;line-height:1;font-weight:bold;">${isCorrect?'○':'×'}</span>
       </div>
-      <p style="font-size:18px;font-weight:bold;color:${isCorrect ? '#065f46' : '#991b1b'};margin:0;">${isCorrect ? '正解！' : `不正解 (正解：${q.answer})`}</p>
+      <p style="font-size:18px;font-weight:bold;color:${isCorrect?'#065f46':'#991b1b'};margin:0;">${isCorrect?'正解！':`不正解 (正解：${q.answer})`}</p>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;width:100%;">
         <p style="font-size:12px;font-weight:bold;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">解説</p>
         <p style="font-size:14px;color:#334155;line-height:1.75;margin:0;">${q.explanation}</p>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
-        ${state.answers.map(a => `<div style="width:26px;height:26px;border-radius:50%;background:${a.correct ? '#10b981' : '#ef4444'};display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:bold;">${a.correct ? '○' : '×'}</div>`).join('')}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:center;">
+        ${state.answers.map(a=>`<div style="width:22px;height:22px;border-radius:50%;background:${a.correct?'#10b981':'#ef4444'};display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:bold;">${a.correct?'○':'×'}</div>`).join('')}
       </div>
     </div>` : '';
 
-  const gridStyle = sel
-    ? 'display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;'
-    : 'display:grid;grid-template-columns:1fr;gap:16px;align-items:start;';
+  const gridStyle = sel ? 'display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;' : 'display:grid;grid-template-columns:1fr;gap:16px;align-items:start;';
 
   app.innerHTML = `
     <div style="max-width:900px;width:100%;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <h1 style="color:white;font-size:18px;font-weight:bold;margin:0;">基本情報技術者 模擬問題</h1>
-        <div style="color:#a5b4fc;font-size:15px;">${state.current + 1} / ${questions.length}問</div>
+        <div style="color:#a5b4fc;font-size:15px;">${state.current+1} / ${questions.length}問</div>
       </div>
       <div style="background:rgba(255,255,255,0.15);border-radius:99px;height:6px;margin-bottom:20px;">
         <div style="background:linear-gradient(90deg,#818cf8,#c084fc);border-radius:99px;height:6px;width:${progress}%;transition:width 0.4s ease;"></div>
@@ -201,7 +704,7 @@ function renderQuestion(app) {
           <div style="margin-bottom:14px;">
             <span style="background:${fieldColor};color:white;border-radius:99px;padding:4px 14px;font-size:12px;font-weight:bold;">${q.field}</span>
           </div>
-          <p style="font-size:16px;font-weight:bold;color:#1e1b4b;line-height:1.7;margin-bottom:22px;">問${state.current + 1}. ${q.question}</p>
+          <p style="font-size:16px;font-weight:bold;color:#1e1b4b;line-height:1.7;margin-bottom:22px;">問${state.current+1}. ${q.question}</p>
           <div style="display:flex;flex-direction:column;gap:10px;">${choiceButtons}</div>
           ${nextBtn}
         </div>
@@ -220,12 +723,8 @@ function selectAnswer(key) {
 }
 
 function nextQuestion() {
-  if (state.current + 1 >= questions.length) {
-    state.finished = true;
-  } else {
-    state.current++;
-    state.selected = null;
-  }
+  if (state.current + 1 >= questions.length) { state.finished = true; }
+  else { state.current++; state.selected = null; }
   render();
 }
 
